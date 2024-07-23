@@ -11,12 +11,16 @@ export class HitCounter extends Construct {
 
     public readonly handler: lambda.Function;
 
+    public readonly table: dynamoDB.Table;
+
     constructor(scope: Construct, id: string, props: HitCounterProps) {
         super(scope, id);
 
         const table = new dynamoDB.Table(this, 'Hits', {
-            partitionKey: { name: 'path', type: dynamoDB.AttributeType.STRING }
+            partitionKey: { name: 'path', type: dynamoDB.AttributeType.STRING },
+            removalPolicy: cdk.RemovalPolicy.DESTROY
         });
+        this.table = table
 
         this.handler = new lambda.Function(this, 'HitCounterHandler', {
             runtime: lambda.Runtime.NODEJS_14_X,
